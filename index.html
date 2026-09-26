@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f4ec">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="A short anatomy practice quiz on cells, membranes, and tissues.">
+  <title>Anatomy Study Sprint</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <style>
+    :root { color-scheme: light; --ink:#172b36; --muted:#50616a; --paper:#f7f4ec; --card:#fffefa; --teal:#176b67; --teal-dark:#105651; --coral:#ef795e; --line:#dce4de; --green:#216846; --red:#9b3934; }
+    * { box-sizing:border-box }
+    body { margin:0; background:var(--paper); color:var(--ink); font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; min-height:100vh; }
+    header { padding:22px 20px 12px; max-width:720px; margin:auto; }
+    .brand { font-size:13px; text-transform:uppercase; letter-spacing:.13em; color:var(--teal); font-weight:800 }
+    h1 { font-family: Georgia,serif; font-size:clamp(32px,9vw,46px); line-height:1.08; margin:8px 0 7px; letter-spacing:-.03em }
+    header p { color:var(--muted); margin:0 }
+    main { max-width:720px; padding:10px 16px 42px; margin:auto }
+    .notice { background:#fff0dc; border:1px solid #f1d3a9; border-radius:14px; padding:13px 15px; color:#614a2d; font-size:14px; margin:10px 0 18px }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:22px; padding:22px 18px; box-shadow:0 8px 30px #263d3510 }
+    .topline { display:flex; justify-content:space-between; gap:12px; align-items:center; color:var(--muted); font-size:14px; font-weight:650 }
+    .track { height:8px; background:#e8eee9; border-radius:8px; margin:12px 0 24px; overflow:hidden }
+    .track span { display:block; height:100%; background:var(--coral); border-radius:8px; transition:width .25s }
+    .topic { color:var(--teal); font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.1em }
+    h2 { font-family:Georgia,serif; font-size:25px; line-height:1.24; margin:9px 0 18px }
+    .answers { display:grid; gap:10px }
+    button { font:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent }
+    .answer { width:100%; min-height:58px; border:2px solid var(--line); background:white; color:var(--ink); padding:13px 15px; border-radius:15px; text-align:left; display:flex; gap:12px; align-items:center; font-weight:600; line-height:1.3 }
+    .answer:active { transform:scale(.99) }
+    .answer:focus-visible,.primary:focus-visible,.secondary:focus-visible { outline:3px solid #ed9a75; outline-offset:2px }
+    .letter { border:1.5px solid #cdd8d2; width:30px; height:30px; flex:0 0 30px; border-radius:10px; display:grid; place-items:center; font-size:14px; font-weight:800; color:var(--teal) }
+    .answer.correct { border-color:#62a27b; background:#eff8f0 }
+    .answer.incorrect { border-color:#d78a7f; background:#fff1ef }
+    .answer:disabled { cursor:default; color:var(--ink); opacity:1 }
+    .feedback { margin-top:17px; padding:15px; border-radius:14px; background:#eef5ef; color:#254737 }
+    .feedback.wrong { background:#fff1ef; color:#663631 }
+    .feedback strong { display:block; font-size:17px; margin-bottom:3px }
+    .feedback p { margin:0; font-size:15px }
+    .actions { display:flex; gap:10px; margin-top:18px; flex-wrap:wrap }
+    .primary,.secondary { min-height:54px; padding:12px 18px; border-radius:14px; font-weight:750; border:0 }
+    .primary { background:var(--teal); color:white; flex:1 }
+    .primary:active { background:var(--teal-dark) }
+    .secondary { background:#eaf0eb; color:var(--ink) }
+    .hidden { display:none!important }
+    .result { text-align:center; padding:12px 4px 2px }
+    .score { font-family:Georgia,serif; font-size:58px; line-height:1; color:var(--teal); margin:14px 0 7px }
+    .result h2 { margin-bottom:7px }
+    .result p { color:var(--muted) }
+    .result .actions { margin-top:22px }
+    .small { font-size:13px; color:var(--muted); margin:15px 4px 0 }
+    footer { max-width:720px; margin:auto; padding:0 20px 30px; font-size:13px; color:var(--muted) }
+    footer a { color:var(--teal) }
+    @media(min-width:600px) { main { padding:12px 24px 48px } .card { padding:28px } header { padding:30px 24px 16px } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Study sprint · Anatomy</div>
+    <h1>Cells, membranes<br>&amp; tissues</h1>
+    <p>A little practice, one question at a time.</p>
+  </header>
+  <main>
+    <aside class="notice"><strong>Trial quiz:</strong> There were no class notes to check against, so these questions use standard introductory anatomy material. Your teacher may use different terms or emphasis.</aside>
+    <section class="card" aria-live="polite">
+      <div id="quiz">
+        <div class="topline"><span id="counter">Question 1 of 12</span><span id="saved">Progress saved on this device</span></div>
+        <div class="track" aria-hidden="true"><span id="bar"></span></div>
+        <div class="topic" id="topic"></div>
+        <h2 id="question"></h2>
+        <div class="answers" id="answers"></div>
+        <div class="feedback hidden" id="feedback" role="status"><strong id="feedbackTitle"></strong><p id="explanation"></p></div>
+        <div class="actions"><button class="primary hidden" id="next">Next question</button><button class="secondary hidden" id="retryMissed">Retry missed</button></div>
+        <p class="small">No account needed. Your current place and missed questions stay in this browser on this device.</p>
+      </div>
+      <div class="result hidden" id="result" aria-live="polite">
+        <div class="topic">Sprint complete</div><div class="score" id="score"></div><h2 id="resultTitle">Nice work showing up.</h2><p id="resultText"></p>
+        <div class="actions"><button class="primary" id="retryAll">Try all questions again</button><button class="secondary hidden" id="resultRetryMissed">Retry missed</button></div>
+      </div>
+    </section>
+  </main>
+  <footer>Learning reference: <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/3-1-the-cell-membrane">OpenStax, The Cell Membrane</a> · <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/4-1-types-of-tissues">OpenStax, Types of Tissues</a>.</footer>
+<script>
+const questions = [
+ {topic:'Cells',q:'Which structure holds most of a cell’s DNA and helps control cell activities?',opts:['Mitochondrion','Nucleus','Cell membrane','Ribosome'],a:1,why:'The nucleus contains most of the cell’s DNA and helps regulate gene activity. Some DNA is also found in mitochondria.'},
+ {topic:'Cells',q:'Which organelle releases much of the usable energy from food molecules?',opts:['Lysosome','Golgi apparatus','Mitochondrion','Nucleolus'],a:2,why:'Mitochondria carry out cellular respiration, transferring energy from food into ATP, a form cells can use.'},
+ {topic:'Cells',q:'What is the jelly-like material inside the cell membrane, outside the nucleus?',opts:['Cytoplasm','Chromatin','Tissue fluid','Matrix'],a:0,why:'Cytoplasm includes the fluid cytosol and the structures suspended in it, outside the nucleus.'},
+ {topic:'Cells',q:'Which cell structure assembles proteins using instructions from messenger RNA?',opts:['Ribosome','Lysosome','Centrosome','Vacuole'],a:0,why:'Ribosomes read messenger RNA and join amino acids to build proteins.'},
+ {topic:'Cells',q:'A group of similar cells working together for a shared function is a…',opts:['Molecule','Tissue','Organ system','Membrane'],a:1,why:'A tissue is a group of cells, along with their surrounding material, working together.'},
+ {topic:'Membranes',q:'The cell membrane is mainly built from two layers of which molecules?',opts:['DNA','Phospholipids','Starch','Calcium salts'],a:1,why:'Phospholipids form a bilayer. Their water-attracting heads face watery surroundings, while water-avoiding tails point inward.'},
+ {topic:'Membranes',q:'What does “selectively permeable” mean for a cell membrane?',opts:['It lets every substance pass freely','It blocks every substance','It allows some substances across more easily than others','It only lets water leave'],a:2,why:'A selectively permeable membrane regulates movement: some substances cross readily, while others need channels, carriers, or energy.'},
+ {topic:'Membranes',q:'Oxygen moves from an area of higher concentration to lower concentration across a membrane. This is…',opts:['Active transport','Simple diffusion','Osmosis','Endocytosis'],a:1,why:'Simple diffusion moves particles down their concentration gradient and does not require cellular energy.'},
+ {topic:'Membranes',q:'What is osmosis?',opts:['Movement of water across a selectively permeable membrane','Movement of proteins out of a cell','Breakdown of glucose for energy','Movement of a cell toward light'],a:0,why:'Osmosis is the diffusion of water across a selectively permeable membrane.'},
+ {topic:'Membranes',q:'A charged sodium ion moves down its concentration gradient through a membrane channel. This is…',opts:['Facilitated diffusion','Active transport','Phagocytosis','Simple diffusion through the lipid tails'],a:0,why:'Charged ions do not pass through the membrane’s hydrophobic interior by simple diffusion. A channel can help them move down the gradient without energy; that is facilitated diffusion.'},
+ {topic:'Tissues',q:'Which tissue type covers body surfaces and lines many internal spaces?',opts:['Connective','Muscle','Epithelial','Nervous'],a:2,why:'Epithelial tissue covers surfaces, lines cavities and passageways, and also forms many glands.'},
+ {topic:'Tissues',q:'Which tissue type is specialized to contract and create movement?',opts:['Nervous','Muscle','Epithelial','Connective'],a:1,why:'Muscle tissue contracts. The three types are skeletal, cardiac, and smooth muscle.'},
+ {topic:'Tissues',q:'Bone, blood, and tendons are examples of which broad tissue type?',opts:['Epithelial','Nervous','Muscle','Connective'],a:3,why:'Connective tissue supports, binds, protects, or transports. Bone, blood, and tendons are all connective tissues.'},
+ {topic:'Tissues',q:'Which tissue type carries electrical signals and helps coordinate body responses?',opts:['Nervous','Connective','Epithelial','Smooth muscle'],a:0,why:'Nervous tissue, made of neurons and supporting glial cells, communicates through electrical and chemical signals.'},
+ {topic:'Tissues',q:'Which order goes from simpler to more complex levels of body organization?',opts:['Organ → cell → tissue → organ system','Cell → tissue → organ → organ system','Tissue → organ system → cell → organ','Cell → organ → organ system → tissue'],a:1,why:'Cells form tissues; different tissues build organs; organs work together in organ systems.'}
+];
+const KEY='anatomy-study-sprint-v1';
+let state; let run=[];
+function fresh(){return {run:questions.map((_,i)=>i),pos:0,answers:{},missed:[],done:false}}
+try { const saved=JSON.parse(localStorage.getItem(KEY)); state=saved&&Array.isArray(saved.run)&&saved.run.length?saved:fresh(); } catch { state=fresh(); }
+const $=id=>document.getElementById(id);
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));$('saved').textContent='Progress saved on this device'}catch{$('saved').textContent='Progress stays only while this page is open'}}
+function render(){
+ const quiz=$('quiz'), result=$('result'); if(state.done){quiz.classList.add('hidden');result.classList.remove('hidden');showResult();persist();return}
+ quiz.classList.remove('hidden');result.classList.add('hidden');
+ if(!state.run.length){state.done=true;render();return}
+ const idx=state.run[state.pos], item=questions[idx], answered=Object.hasOwn(state.answers,idx);
+ $('counter').textContent=`Question ${state.pos+1} of ${state.run.length}`;$('topic').textContent=item.topic;$('question').textContent=item.q;$('bar').style.width=`${(state.pos/state.run.length)*100}%`;
+ $('answers').replaceChildren();
+ item.opts.forEach((text,n)=>{const b=document.createElement('button');b.className='answer';b.innerHTML=`<span class="letter">${String.fromCharCode(65+n)}</span><span></span>`;b.lastElementChild.textContent=text;b.disabled=answered;if(answered&&n===item.a)b.classList.add('correct');if(answered&&n===state.answers[idx]&&n!==item.a)b.classList.add('incorrect');b.addEventListener('click',()=>choose(idx,n));$('answers').append(b)});
+ $('feedback').classList.toggle('hidden',!answered);$('next').classList.toggle('hidden',!answered||state.pos>=state.run.length-1);$('retryMissed').classList.toggle('hidden',!answered||state.pos<state.run.length-1||!state.missed.length);
+ if(answered){const ok=state.answers[idx]===item.a;$('feedback').classList.toggle('wrong',!ok);$('feedbackTitle').textContent=ok?'That’s right!':`Not quite. The answer is ${String.fromCharCode(65+item.a)}.`;$('explanation').textContent=item.why}
+ persist();
+}
+function choose(idx,n){if(Object.hasOwn(state.answers,idx))return;state.answers[idx]=n;if(n!==questions[idx].a&&!state.missed.includes(idx))state.missed.push(idx);if(state.pos>=state.run.length-1)state.done=true;render()}
+function showResult(){const correct=state.run.filter(i=>state.answers[i]===questions[i].a).length,total=state.run.length;$('score').textContent=`${correct} / ${total}`;$('resultTitle').textContent=correct===total?'Fantastic work!':correct>=Math.ceil(total*.7)?'You’re building a strong start.':'Good practice. Every try helps.';$('resultText').textContent=state.missed.length?`${state.missed.length} question${state.missed.length===1?'':'s'} to revisit. Take another pass at just those, or try the whole sprint.`:'You got every question right in this round. Try again later to keep it fresh.';$('resultRetryMissed').classList.toggle('hidden',!state.missed.length)}
+function next(){if(state.pos<state.run.length-1){state.pos++;render()}}
+function retryMissed(){if(!state.missed.length)return;state={run:[...state.missed],pos:0,answers:{},missed:[],done:false};render()}
+function retryAll(){state=fresh();render()}
+$('next').addEventListener('click',next);$('retryMissed').addEventListener('click',retryMissed);$('resultRetryMissed').addEventListener('click',retryMissed);$('retryAll').addEventListener('click',retryAll);
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
